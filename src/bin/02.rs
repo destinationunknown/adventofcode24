@@ -44,7 +44,13 @@ pub fn part_two(input: &str) -> Option<u32> {
         .iter()
         .filter(|report| {
             (0..report.len()).any(|i| {
-                is_valid(&report[..i].iter().chain(&report[i+1..]).copied().collect::<Vec<i32>>())
+                is_valid(
+                    &report[..i]
+                        .iter()
+                        .chain(&report[i + 1..])
+                        .copied()
+                        .collect::<Vec<i32>>(),
+                )
             })
         })
         .count() as u32;
