@@ -24,9 +24,7 @@ pub fn part_one(input: &str) -> Option<u32> {
             for i in 0..4 {
                 let (r, c) = (row + (i * dr), col + (i * dc));
                 if r >= 0 && c >= 0 && r < m && c < n {
-                    if xmas.chars().nth(i as usize).unwrap()
-                        != matrix[r as usize][c as usize]
-                    {
+                    if xmas.chars().nth(i as usize).unwrap() != matrix[r as usize][c as usize] {
                         continue 'outer;
                     }
                 } else {
@@ -51,7 +49,36 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let matrix: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
+    let m = matrix.len() as i32;
+    let n = matrix[0].len() as i32;
+
+    let valid = |c: char| ->  bool {
+        return c == 'M' || c == 'S';
+    };
+
+    let check_pos = |row: usize, col: usize| -> bool {
+        let center = matrix[row][col];
+        let a = matrix[row - 1][col - 1];
+        let b = matrix[row + 1][col + 1];
+        let c = matrix[row + 1][col - 1];
+        let d = matrix[row - 1][col + 1];
+        let primary = valid(a) && valid(b) && (a != b);
+        let secondary = valid(c) && valid(d) && (c != d);
+        return center == 'A' && primary && secondary;
+    };
+
+    let mut count = 0;
+
+    for i in 1..m - 1 {
+        for j in 1..n - 1 {
+            if check_pos(i as usize, j as usize) {
+                count += 1;
+            }
+        }
+    }
+
+    Some(count as u32)
 }
 
 #[cfg(test)]
@@ -66,7 +93,9 @@ mod tests {
 
     #[test]
     fn test_part_two() {
-        let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        let result = part_two(&advent_of_code::template::read_file_part(
+            "examples", DAY, 2,
+        ));
+        assert_eq!(result, Some(9));
     }
 }
